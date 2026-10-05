@@ -2,8 +2,28 @@ provider "aws" {
   region = "ap-south-1"
 }
 
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["al2023-ami-2023.*-x86_64"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
 resource "aws_instance" "hello" {
-  ami           = "ami-0b6d9d3d33ba97d99"
+  ami           = data.aws_ami.amazon_linux.id
   instance_type = var.instance_type
 
   tags = {
